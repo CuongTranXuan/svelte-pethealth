@@ -51,12 +51,9 @@
     <!-- Login Form -->
     <div class="bg-white rounded-lg shadow-md p-6">
       <form on:submit|preventDefault={handleLogin} class="space-y-4">
-
         <!-- Email Input -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1"> Email </label>
           <input
             id="email"
             type="email"
@@ -101,7 +98,6 @@
             Đăng nhập
           {/if}
         </button>
-
       </form>
     </div>
   </div>

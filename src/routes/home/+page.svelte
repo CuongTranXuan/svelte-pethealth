@@ -52,10 +52,9 @@
 
       // Process results
       bills = [];
-      querySnapshot.forEach((doc) => {
+      querySnapshot.forEach(doc => {
         bills.push(doc.data() as Bill);
       });
-
     } catch (error) {
       console.error('Error fetching appointments:', error);
     } finally {
@@ -95,12 +94,9 @@
 
   <!-- Main Content -->
   <div class="max-w-6xl mx-auto px-4 py-8">
-
     <!-- Page Title -->
     <div class="mb-8">
-      <h2 class="text-3xl font-bold text-gray-900 mb-2">
-        Lịch hẹn hôm nay
-      </h2>
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Lịch hẹn hôm nay</h2>
       <p class="text-gray-600">
         {new Date().toLocaleDateString('vi-VN')} - {bills.length} lịch hẹn
       </p>
@@ -109,10 +105,12 @@
     <!-- Loading State -->
     {#if loading}
       <div class="flex justify-center py-12">
-        <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div
+          class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+        ></div>
       </div>
 
-    <!-- Empty State -->
+      <!-- Empty State -->
     {:else if bills.length === 0}
       <div class="text-center py-12">
         <div class="text-6xl mb-4">📅</div>
@@ -120,12 +118,13 @@
         <p class="text-gray-600">Hôm nay không có khách hàng nào đặt lịch hẹn.</p>
       </div>
 
-    <!-- Bills List -->
+      <!-- Bills List -->
     {:else}
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {#each bills as bill}
-          <div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-
+          <div
+            class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+          >
             <!-- Customer Info -->
             <div class="border-b border-gray-100 pb-4 mb-4">
               <h3 class="text-lg font-semibold text-gray-900">{bill.customerName}</h3>
@@ -158,7 +157,11 @@
 
               <div class="flex justify-between pt-2 border-t border-gray-100">
                 <span class="text-gray-700">Còn lại:</span>
-                <span class="font-bold {bill.price * 1000 - bill.paid * 1000 > 0 ? 'text-red-600' : 'text-green-600'}">
+                <span
+                  class="font-bold {bill.price * 1000 - bill.paid * 1000 > 0
+                    ? 'text-red-600'
+                    : 'text-green-600'}"
+                >
                   {formatPrice(bill.price * 1000 - bill.paid * 1000)}đ
                 </span>
               </div>
@@ -166,18 +169,20 @@
 
             <!-- Action Buttons -->
             <div class="mt-6 flex space-x-3">
-              <button class="flex-1 bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 px-3 rounded-md text-sm font-medium transition-colors">
+              <button
+                class="flex-1 bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 px-3 rounded-md text-sm font-medium transition-colors"
+              >
                 Chi tiết
               </button>
-              <button class="flex-1 bg-green-50 text-green-700 hover:bg-green-100 py-2 px-3 rounded-md text-sm font-medium transition-colors">
+              <button
+                class="flex-1 bg-green-50 text-green-700 hover:bg-green-100 py-2 px-3 rounded-md text-sm font-medium transition-colors"
+              >
                 Thanh toán
               </button>
             </div>
-
           </div>
         {/each}
       </div>
     {/if}
-
   </div>
 </main>

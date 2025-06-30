@@ -14,7 +14,9 @@
 
 <main class="min-h-screen bg-gray-50 flex items-center justify-center">
   <div class="text-center">
-    <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+    <div
+      class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+    ></div>
     <p class="text-gray-600">Đang chuyển hướng...</p>
   </div>
 </main>

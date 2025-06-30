@@ -9,7 +9,7 @@ export const loading = writable(true);
 
 // Initialize auth state listener
 if (browser) {
-  onAuthStateChanged(auth, (firebaseUser) => {
+  onAuthStateChanged(auth, firebaseUser => {
     user.set(firebaseUser);
     loading.set(false);
   });
@@ -20,8 +20,9 @@ export const login = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return { success: true, user: userCredential.user };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -29,7 +30,8 @@ export const logout = async () => {
   try {
     await signOut(auth);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { success: false, error: errorMessage };
   }
 };

@@ -4,12 +4,12 @@ import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration - using the legacy credentials structure
 const firebaseConfig = {
-  apiKey: "AIzaSyCRRK3C0fRkCPEdnjlDFRAWg_2ksTL-LmM",
-  authDomain: "pet-health-ba01d.firebaseapp.com",
-  databaseURL: "https://pet-health-ba01d.firebaseio.com",
-  projectId: "pet-health-ba01d",
-  storageBucket: "pet-health-ba01d.appspot.com",
-  messagingSenderId: "982821972455"
+  apiKey: 'AIzaSyCRRK3C0fRkCPEdnjlDFRAWg_2ksTL-LmM',
+  authDomain: 'pet-health-ba01d.firebaseapp.com',
+  databaseURL: 'https://pet-health-ba01d.firebaseio.com',
+  projectId: 'pet-health-ba01d',
+  storageBucket: 'pet-health-ba01d.appspot.com',
+  messagingSenderId: '982821972455',
 };
 
 // Initialize Firebase
