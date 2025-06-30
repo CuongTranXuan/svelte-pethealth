@@ -1,3 +1,6 @@
+// Load environment variables
+require('dotenv').config()
+
 import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
@@ -9,13 +12,13 @@ import Vuefire from 'vuefire'
 import Vuetify from 'vuetify'
 import '../node_modules/vuetify/dist/vuetify.min.css';
 //import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import colors from 'vuetify/es5/util/colors' 
+import colors from 'vuetify/es5/util/colors'
 
 
 Vue.use(Vuetify, {
     theme: {
       primary: colors.blue.darken1,
-      secondary: colors.deepOrange.lighten4, 
+      secondary: colors.deepOrange.lighten4,
       accent: colors.indigo.base
     }
   })
@@ -44,7 +47,7 @@ var router = new VueRouter({
 router.beforeEach(function(to,from,next){
 
     //Change title
-    document.title = to.meta.title    
+    document.title = to.meta.title
     //auth with firebase
     //check whether this part need permission or not
     var requireAuth = to.matched.some(record => record.meta.requireAuth);
