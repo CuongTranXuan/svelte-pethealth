@@ -14,4 +14,9 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'bg-primary-600',
+    'hover:bg-primary-700',
+    'focus:ring-primary-500',
+  ],
 }

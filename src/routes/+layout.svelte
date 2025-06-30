@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   import '../app.css';
 </script>
 
-<main class="h-full">
+<div class="min-h-screen">
   <slot />
-</main>
+</div>
