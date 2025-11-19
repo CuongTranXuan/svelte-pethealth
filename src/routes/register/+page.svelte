@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { login } from '$lib/stores/auth';
+  import { supabase } from '$lib/supabase';
   import { goto } from '$app/navigation';
 
   let email = '';
@@ -7,16 +7,21 @@
   let error = '';
   let loading = false;
 
-  async function handleLogin() {
+  async function handleRegister() {
     loading = true;
     error = '';
-    const result = await login(email, password);
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
     loading = false;
 
-    if (result.success) {
-      goto('/');
+    if (signUpError) {
+      error = signUpError.message;
     } else {
-      error = result.error || 'Login failed';
+      goto('/');
     }
   }
 </script>
@@ -24,18 +29,15 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8">
     <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Đăng nhập vào tài khoản
-      </h2>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Tạo tài khoản mới</h2>
       <p class="mt-2 text-center text-sm text-gray-600">
         Hoặc
-        <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
-          đăng ký tài khoản mới
+        <a href="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
+          đăng nhập vào tài khoản hiện có
         </a>
       </p>
     </div>
-    <form class="mt-8 space-y-6" on:submit|preventDefault={handleLogin}>
-      <input type="hidden" name="remember" value="true" />
+    <form class="mt-8 space-y-6" on:submit|preventDefault={handleRegister}>
       <div class="rounded-md shadow-sm -space-y-px">
         <div>
           <label for="email-address" class="sr-only">Địa chỉ Email</label>
@@ -56,7 +58,7 @@
             id="password"
             name="password"
             type="password"
-            autocomplete="current-password"
+            autocomplete="new-password"
             required
             bind:value={password}
             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -75,26 +77,10 @@
           disabled={loading}
           class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
         >
-          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <!-- Heroicon name: solid/lock-closed -->
-            <svg
-              class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
           {#if loading}
-            Đang xử lý...
+            Đang đăng ký...
           {:else}
-            Sign in
+            Đăng ký
           {/if}
         </button>
       </div>
