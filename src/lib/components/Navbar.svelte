@@ -52,6 +52,14 @@
             >
               Hóa Đơn
             </a>
+            <a
+              href="/statistics"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              class:border-indigo-500={$page.url.pathname.startsWith('/statistics')}
+              class:text-gray-900={$page.url.pathname.startsWith('/statistics')}
+            >
+              Thống Kê
+            </a>
           </div>
         {/if}
       </div>
