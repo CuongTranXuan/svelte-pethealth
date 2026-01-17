@@ -1,330 +1,371 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabase';
-  import { user, loading as authLoading } from '$lib/stores/auth';
-  import { goto } from '$app/navigation';
   import Navbar from '$lib/components/Navbar.svelte';
 
-  type ViewMode = 'year' | 'month' | 'date';
-  type Bill = {
-    id: string;
-    price: number;
-    paid: number;
-    appointed_date: string;
-    created_at: string;
+  let years: number[] = [];
+  const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  let days: number[] = [];
+
+  let selectedYear: number | null = new Date().getFullYear();
+  let selectedMonth: number | null = new Date().getMonth() + 1;
+  let selectedDay: number | null = new Date().getDate();
+
+  let stats = {
+    total_price: 0,
+    total_paid: 0,
+    total_debt: 0,
+    bill_count: 0,
   };
 
-  let bills: Bill[] = [];
-  let loading = true;
-  let viewMode: ViewMode = 'year';
-  let selectedYear: number = new Date().getFullYear();
-  let selectedMonth: number = new Date().getMonth() + 1;
+  let bills: any[] = [];
+  let loading = false;
+  const billLimit = 50;
 
-  onMount(() => {
-    const unsubscribe = user.subscribe(u => {
-      if (!u && !$authLoading) {
-        goto('/login');
-      } else if (u) {
-        fetchBills();
-      }
-    });
-    return unsubscribe;
-  });
+  function generateYears() {
+    const currentYear = new Date().getFullYear();
+    const tempYears = [];
+    for (let i = 2018; i <= currentYear; i++) {
+      tempYears.push(i);
+    }
+    // Sort descending
+    years = tempYears.sort((a, b) => b - a);
+  }
 
-  async function fetchBills() {
+  function calculateDays() {
+    days = [];
+    if (!selectedYear || !selectedMonth) return;
+
+    const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    const tempDays = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      tempDays.push(i);
+    }
+    days = tempDays;
+  }
+
+  function formatDateRange() {
+    if (!selectedYear) return { start: null, end: null };
+
+    let start = '';
+    let end = '';
+
+    if (selectedMonth === null) {
+      // Full Year
+      start = `${selectedYear}-01-01`;
+      end = `${selectedYear}-12-31`;
+    } else if (selectedDay === null) {
+      // Full Month
+      const lastDay = new Date(selectedYear, selectedMonth, 0).getDate();
+      // Pad month
+      const m = selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth;
+      start = `${selectedYear}-${m}-01`;
+      end = `${selectedYear}-${m}-${lastDay}`;
+    } else {
+      // Specific Day
+      const m = selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth;
+      const d = selectedDay < 10 ? `0${selectedDay}` : selectedDay;
+      start = `${selectedYear}-${m}-${d}`;
+      end = `${selectedYear}-${m}-${d}`;
+    }
+    return { start, end };
+  }
+
+  async function fetchStats() {
     loading = true;
-    const { data, error } = await supabase
-      .from('bills')
-      .select('id, price, paid, appointed_date, created_at')
-      .order('appointed_date', { ascending: false });
+    const { start, end } = formatDateRange();
 
-    if (error) {
-      console.error('Error fetching bills:', error);
+    if (!start || !end) {
+      loading = false;
+      return;
+    }
+
+    // Call RPC for totals
+    // Note: RPC logic in plan: get_bill_stats(start_date, end_date)
+    const { data: statsData, error: statsError } = await supabase.rpc('get_bill_stats', {
+      start_date: start,
+      end_date: end,
+    });
+
+    if (statsError) {
+      console.error('Error fetching stats:', statsError);
+    } else if (statsData && statsData.length > 0) {
+      // RPC returns an array of objects
+      stats = statsData[0];
+    } else {
+      // Reset if no data
+      stats = { total_price: 0, total_paid: 0, total_debt: 0, bill_count: 0 };
+    }
+
+    // Fetch Bills List (Limited to avoid overload, or pagination)
+    // Legacy had full list, but suggested avoiding overload.
+    // We will show top 100 most recent for the period.
+    const { data: billsData, error: billsError } = await supabase
+      .from('bills')
+      .select(
+        `
+            *,
+            pets (name),
+            customers (name)
+        `
+      )
+      .gte('selected_date', start)
+      .lte('selected_date', end)
+      .order('selected_date', { ascending: false })
+      .limit(100);
+
+    if (billsError) {
+      console.error('Error fetching bills:', billsError);
       bills = [];
     } else {
-      bills = data || [];
+      bills = billsData || [];
     }
+
     loading = false;
   }
 
-  function formatPrice(value: number) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  function formatCurrency(amount: number) {
+    if (!amount) return '0 ₫';
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   }
 
-  // Calculate revenue by year
-  function getRevenueByYear() {
-    const yearRevenue: Record<number, { total: number; paid: number; count: number }> = {};
-
-    bills.forEach(bill => {
-      const year = new Date(bill.appointed_date || bill.created_at).getFullYear();
-      if (!yearRevenue[year]) {
-        yearRevenue[year] = { total: 0, paid: 0, count: 0 };
-      }
-      yearRevenue[year].total += bill.price || 0;
-      yearRevenue[year].paid += bill.paid || 0;
-      yearRevenue[year].count++;
-    });
-
-    return Object.entries(yearRevenue)
-      .map(([year, data]) => ({ year: parseInt(year), ...data }))
-      .sort((a, b) => b.year - a.year);
+  function handleSearch() {
+    fetchStats();
   }
 
-  // Calculate revenue by month for selected year
-  function getRevenueByMonth(year: number) {
-    const monthRevenue: Record<number, { total: number; paid: number; count: number }> = {};
-
-    bills
-      .filter(bill => new Date(bill.appointed_date || bill.created_at).getFullYear() === year)
-      .forEach(bill => {
-        const month = new Date(bill.appointed_date || bill.created_at).getMonth() + 1;
-        if (!monthRevenue[month]) {
-          monthRevenue[month] = { total: 0, paid: 0, count: 0 };
-        }
-        monthRevenue[month].total += bill.price || 0;
-        monthRevenue[month].paid += bill.paid || 0;
-        monthRevenue[month].count++;
-      });
-
-    return Object.entries(monthRevenue)
-      .map(([month, data]) => ({ month: parseInt(month), ...data }))
-      .sort((a, b) => b.month - a.month);
+  // Effect to recalculate days when month/year changes
+  $: if (selectedYear || selectedMonth) {
+    calculateDays();
   }
 
-  // Calculate revenue by date for selected month
-  function getRevenueByDate(year: number, month: number) {
-    const dateRevenue: Record<string, { total: number; paid: number; count: number }> = {};
-
-    bills
-      .filter(bill => {
-        const date = new Date(bill.appointed_date || bill.created_at);
-        return date.getFullYear() === year && date.getMonth() + 1 === month;
-      })
-      .forEach(bill => {
-        const date = (bill.appointed_date || bill.created_at).split('T')[0];
-        if (!dateRevenue[date]) {
-          dateRevenue[date] = { total: 0, paid: 0, count: 0 };
-        }
-        dateRevenue[date].total += bill.price || 0;
-        dateRevenue[date].paid += bill.paid || 0;
-        dateRevenue[date].count++;
-      });
-
-    return Object.entries(dateRevenue)
-      .map(([date, data]) => ({ date, ...data }))
-      .sort((a, b) => b.date.localeCompare(a.date));
-  }
-
-  function getMonthName(month: number) {
-    const monthNames = [
-      'Tháng 1',
-      'Tháng 2',
-      'Tháng 3',
-      'Tháng 4',
-      'Tháng 5',
-      'Tháng 6',
-      'Tháng 7',
-      'Tháng 8',
-      'Tháng 9',
-      'Tháng 10',
-      'Tháng 11',
-      'Tháng 12',
-    ];
-    return monthNames[month - 1];
-  }
-
-  $: yearData = getRevenueByYear();
-  $: monthData = getRevenueByMonth(selectedYear);
-  $: dateData = getRevenueByDate(selectedYear, selectedMonth);
+  onMount(() => {
+    generateYears();
+    calculateDays();
+    fetchStats();
+  });
 </script>
 
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen bg-gray-50">
   <Navbar />
 
   <main class="py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-8">Thống Kê Doanh Thu</h1>
+      <!-- Filters -->
+      <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Bộ Lọc Thời Gian</h2>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-4">
+          <!-- Year -->
+          <div>
+            <label for="year" class="block text-sm font-medium text-gray-700">Năm</label>
+            <select
+              id="year"
+              bind:value={selectedYear}
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              {#each years as y}
+                <option value={y}>{y}</option>
+              {/each}
+            </select>
+          </div>
 
-      {#if loading}
-        <div class="text-center py-12">
-          <div class="spinner">Đang tải...</div>
+          <!-- Month -->
+          <div>
+            <label for="month" class="block text-sm font-medium text-gray-700"
+              >Tháng (Không bắt buộc)</label
+            >
+            <select
+              id="month"
+              bind:value={selectedMonth}
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value={null}>Cả năm</option>
+              {#each months as m}
+                <option value={m}>Tháng {m}</option>
+              {/each}
+            </select>
+          </div>
+
+          <!-- Day -->
+          <div>
+            <label for="day" class="block text-sm font-medium text-gray-700"
+              >Ngày (Không bắt buộc)</label
+            >
+            <select
+              id="day"
+              bind:value={selectedDay}
+              disabled={!selectedMonth}
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value={null}>Cả tháng</option>
+              {#each days as d}
+                <option value={d}>{d}</option>
+              {/each}
+            </select>
+          </div>
+
+          <!-- Search Button -->
+          <div class="flex items-end">
+            <button
+              on:click={handleSearch}
+              disabled={loading}
+              class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            >
+              {#if loading}
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Đang tải...
+              {:else}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Tìm kiếm
+              {/if}
+            </button>
+          </div>
+          //
         </div>
-      {:else}
-        <!-- View Mode Selector -->
-        <div class="bg-white shadow sm:rounded-lg mb-6">
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
           <div class="px-4 py-5 sm:p-6">
-            <div class="flex gap-4 items-center">
-              <label class="font-medium text-gray-700">Xem theo:</label>
-              <div class="flex gap-2">
-                <button
-                  on:click={() => (viewMode = 'year')}
-                  class="px-4 py-2 rounded-md {viewMode === 'year'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-700'}"
-                >
-                  Năm
-                </button>
-                <button
-                  on:click={() => (viewMode = 'month')}
-                  class="px-4 py-2 rounded-md {viewMode === 'month'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-700'}"
-                >
-                  Tháng
-                </button>
-                <button
-                  on:click={() => (viewMode = 'date')}
-                  class="px-4 py-2 rounded-md {viewMode === 'date'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-700'}"
-                >
-                  Ngày
-                </button>
-              </div>
-
-              {#if viewMode !== 'year'}
-                <select
-                  bind:value={selectedYear}
-                  class="ml-4 px-3 py-2 border border-gray-300 rounded-md"
-                >
-                  {#each yearData as { year }}
-                    <option value={year}>Năm {year}</option>
-                  {/each}
-                </select>
-              {/if}
-
-              {#if viewMode === 'date'}
-                <select
-                  bind:value={selectedMonth}
-                  class="px-3 py-2 border border-gray-300 rounded-md"
-                >
-                  {#each Array(12) as _, i}
-                    <option value={i + 1}>{getMonthName(i + 1)}</option>
-                  {/each}
-                </select>
-              {/if}
-            </div>
+            <dt class="text-sm font-medium text-gray-500 truncate">Tổng Doanh Thu</dt>
+            <dd class="mt-1 text-3xl font-semibold text-green-600">
+              {formatCurrency(stats.total_price)}
+            </dd>
           </div>
         </div>
 
-        <!-- Revenue Table -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {viewMode === 'year' ? 'Năm' : viewMode === 'month' ? 'Tháng' : 'Ngày'}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Số Hóa Đơn
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Tổng Doanh Thu
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Đã Thu
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Còn Lại
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {#if viewMode === 'year'}
-                {#each yearData as row}
-                  <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      <button
-                        on:click={() => {
-                          selectedYear = row.year;
-                          viewMode = 'month';
-                        }}
-                        class="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Năm {row.year}
-                      </button>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {row.count}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatPrice(row.total)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                      {formatPrice(row.paid)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                      {formatPrice(row.total - row.paid)}
-                    </td>
-                  </tr>
-                {/each}
-              {:else if viewMode === 'month'}
-                {#each monthData as row}
-                  <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      <button
-                        on:click={() => {
-                          selectedMonth = row.month;
-                          viewMode = 'date';
-                        }}
-                        class="text-indigo-600 hover:text-indigo-900"
-                      >
-                        {getMonthName(row.month)}
-                      </button>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {row.count}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatPrice(row.total)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                      {formatPrice(row.paid)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                      {formatPrice(row.total - row.paid)}
-                    </td>
-                  </tr>
-                {/each}
-              {:else}
-                {#each dateData as row}
-                  <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {row.date}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {row.count}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatPrice(row.total)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                      {formatPrice(row.paid)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                      {formatPrice(row.total - row.paid)}
-                    </td>
-                  </tr>
-                {/each}
-              {/if}
-            </tbody>
-          </table>
-
-          {#if (viewMode === 'year' && yearData.length === 0) || (viewMode === 'month' && monthData.length === 0) || (viewMode === 'date' && dateData.length === 0)}
-            <div class="p-6 text-center text-gray-500">Không có dữ liệu</div>
-          {/if}
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <dt class="text-sm font-medium text-gray-500 truncate">Đã Thanh Toán</dt>
+            <dd class="mt-1 text-3xl font-semibold text-blue-600">
+              {formatCurrency(stats.total_paid)}
+            </dd>
+          </div>
         </div>
-      {/if}
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <dt class="text-sm font-medium text-gray-500 truncate">Còn Nợ</dt>
+            <dd class="mt-1 text-3xl font-semibold text-red-600">
+              {formatCurrency(stats.total_debt)}
+            </dd>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="flex flex-col">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >Ngày</th
+                    >
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >Khách Hàng / Thú Cưng</th
+                    >
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >Mô Tả</th
+                    >
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >Tổng Tiền</th
+                    >
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >Đã Trả</th
+                    >
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {#if bills.length === 0}
+                    <tr>
+                      <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Không có hóa đơn nào trong khoảng thời gian này.
+                      </td>
+                    </tr>
+                  {/if}
+                  {#each bills as bill}
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {bill.selected_date}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="text-sm font-medium text-gray-900">
+                          {bill.customers?.name || 'Unknown'}
+                        </div>
+                        <div class="text-sm text-gray-500">{bill.pets?.name || 'Unknown'}</div>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                        {bill.description}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {formatCurrency(bill.price)}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatCurrency(bill.paid)}
+                        {#if bill.price > bill.paid}
+                          <span
+                            class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800"
+                          >
+                            Nợ
+                          </span>
+                        {/if}
+                      </td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
+            {#if bills.length >= 100}
+              <div class="mt-4 text-center text-sm text-gray-500">
+                Chỉ hiển thị 100 hóa đơn gần nhất. Thu hẹp khoảng thời gian để xem thêm.
+              </div>
+            {/if}
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </div>

@@ -41,134 +41,187 @@ const db = admin.firestore();
 // Initialize Supabase
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+async function getAllCustomers() {
+  const { data, error } = await supabase.from('customers').select('id, phone');
+  if (error) throw error;
+  return new Map(data.map(c => [c.id, c]));
+}
+
+async function getAllPets() {
+  const { data, error } = await supabase.from('pets').select('owner_id, name');
+  if (error) throw error;
+  // Key: owner_id + name
+  return new Set(data.map(p => `${p.owner_id}:${p.name}`));
+}
+
+async function getAllBills() {
+  // Select fields needed for fuzzy matching
+  const { data, error } = await supabase.from('bills').select('customer_id, appointed_date, price');
+  if (error) throw error;
+  // Key: customer_id + appointed_date + price
+  return new Set(data.map(b => `${b.customer_id}:${b.appointed_date}:${b.price}`));
+}
+
 async function migrateCustomers() {
-  console.log('Migrating Customers...');
+  console.log('Syncing Customers...');
   const snapshot = await db.collection('customer').get();
   let count = 0;
+  const skipped = 0;
+
+  // We use upsert for customers because we rely on the ID being the key.
+  const customers = [];
 
   for (const doc of snapshot.docs) {
     const data = doc.data();
-    const { error } = await supabase.from('customers').insert({
-      // Map fields
-      id: data['created-Date'] || data.id, // Use created-Date as ID if available, otherwise fallback to doc ID
+    customers.push({
+      id: data['created-Date'] || data.id,
       phone: data.phone,
       name: data.name,
       address: data.address,
       email: data.email,
       gender: data.gender,
-      // created_at: new Date(data['created-Date']).toISOString() // Optional: if we want to preserve creation time too
     });
+  }
+
+  // Batch insert/upsert in chunks of 100
+  for (let i = 0; i < customers.length; i += 100) {
+    const chunk = customers.slice(i, i + 100);
+    const { error } = await supabase.from('customers').upsert(chunk);
 
     if (error) {
-      if (error.code === '23505') {
-        // Unique violation
-        console.warn(`Customer ${data.phone} already exists. Skipping.`);
-      } else {
-        console.error(`Error migrating customer ${data.phone}:`, error.message);
-      }
+      console.error('Error syncing customers batch:', error.message);
     } else {
-      count++;
+      count += chunk.length;
     }
   }
-  console.log(`Migrated ${count} customers.`);
+
+  console.log(`Synced ${count} customers.`);
 }
 
 async function migratePets() {
-  console.log('Migrating Pets...');
+  console.log('Syncing Pets...');
   const snapshot = await db.collection('pet').get();
+  const existingPets = await getAllPets();
+  const customerMap = await getAllCustomers(); // Need this to lookup owner_id by phone if needed?
+  // Wait, local customer map is by ID.
+  // In the loop we look up owner by phone.
+  // Let's re-fetch map by Phone for faster lookup.
+  const { data: customersByPhoneData } = await supabase.from('customers').select('id, phone');
+  const customerIdByPhone = new Map(customersByPhoneData.map(c => [c.phone, c.id]));
+
   let count = 0;
+  let skipped = 0;
+  const petsToInsert = [];
 
   for (const doc of snapshot.docs) {
     const data = doc.data();
+    const ownerId = customerIdByPhone.get(data.owner_phone);
 
-    // Find owner by phone
-    const { data: owner } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('phone', data.owner_phone)
-      .single();
-
-    if (!owner) {
-      console.warn(`Owner not found for pet ${data.name} (Phone: ${data.owner_phone}). Skipping.`);
+    if (!ownerId) {
+      // console.warn(`Owner not found for pet ${data.name} (Phone: ${data.owner_phone}). Skipping.`);
       continue;
     }
 
-    const { error } = await supabase.from('pets').insert({
-      owner_id: owner.id,
+    const key = `${ownerId}:${data.name}`;
+    if (existingPets.has(key)) {
+      skipped++;
+      continue;
+    }
+
+    petsToInsert.push({
+      owner_id: ownerId,
       name: data.name,
       species: data.species,
       age: data.age,
       gender: data.gender,
       description: data.description,
     });
-
-    if (error) console.error(`Error migrating pet ${data.name}:`, error.message);
-    else count++;
   }
-  console.log(`Migrated ${count} pets.`);
+
+  // Batch insert
+  for (let i = 0; i < petsToInsert.length; i += 100) {
+    const chunk = petsToInsert.slice(i, i + 100);
+    const { error } = await supabase.from('pets').insert(chunk);
+    if (error) console.error('Error inserting pets batch:', error.message);
+    else count += chunk.length;
+  }
+
+  console.log(`Synced ${count} new pets (Skipped ${skipped} existing).`);
 }
 
 async function migrateBills() {
-  console.log('Migrating Bills...');
+  console.log('Syncing Bills...');
   const snapshot = await db.collection('bill').get();
+  const existingBills = await getAllBills();
+  const { data: customersByPhoneData } = await supabase.from('customers').select('id, phone');
+  const customerIdByPhone = new Map(customersByPhoneData.map(c => [c.phone, c.id]));
+
+  // Also need pet map to find pet_id?
+  const { data: petsData } = await supabase.from('pets').select('id, owner_id, name');
+  // Map: owner_id:pet_name -> pet_id
+  const petIdMap = new Map(petsData.map(p => [`${p.owner_id}:${p.name}`, p.id]));
+
   let count = 0;
+  let skipped = 0;
+  const billsToInsert = [];
 
   for (const doc of snapshot.docs) {
     const data = doc.data();
+    const customerId = customerIdByPhone.get(data.customerPhone);
 
-    // Find customer
-    const { data: customer } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('phone', data.customerPhone)
-      .single();
-
-    if (!customer) {
-      console.warn(`Customer not found for bill (Phone: ${data.customerPhone}). Skipping.`);
+    if (!customerId) {
+      // console.warn(`Customer not found for bill (Phone: ${data.customerPhone}). Skipping.`);
       continue;
     }
 
-    // Find pet (optional, try to match by name and owner)
-    let petId = null;
-    if (data.pet && data.pet.name) {
-      const { data: pet } = await supabase
-        .from('pets')
-        .select('id')
-        .eq('owner_id', customer.id)
-        .eq('name', data.pet.name)
-        .single();
+    const appointedDate = (data.appointmentDate || data.appointedDate || '').split('T')[0];
+    const key = `${customerId}:${appointedDate}:${data.price}`;
 
-      if (pet) petId = pet.id;
+    if (existingBills.has(key)) {
+      skipped++;
+      continue;
     }
 
-    const { error } = await supabase.from('bills').insert({
-      customer_id: customer.id,
+    let petId = null;
+    if (data.pet && data.pet.name) {
+      petId = petIdMap.get(`${customerId}:${data.pet.name}`) || null;
+    }
+
+    billsToInsert.push({
+      customer_id: customerId,
       pet_id: petId,
       description: data.description,
       price: data.price,
       paid: data.paid,
-      // Ensure date is YYYY-MM-DD for DATE column
-      appointed_date: (data.appointmentDate || data.appointedDate || '').split('T')[0],
+      appointed_date: appointedDate,
       selected_date: data.selectedDate,
       created_at: data.createdDate
         ? new Date(data.createdDate).toISOString()
         : new Date().toISOString(),
     });
-
-    if (error) console.error(`Error migrating bill:`, error.message);
-    else count++;
   }
-  console.log(`Migrated ${count} bills.`);
+
+  // Batch insert
+  for (let i = 0; i < billsToInsert.length; i += 100) {
+    const chunk = billsToInsert.slice(i, i + 100);
+    const { error } = await supabase.from('bills').insert(chunk);
+    if (error) console.error('Error inserting bills batch:', error.message);
+    else count += chunk.length;
+  }
+
+  console.log(`Synced ${count} new bills (Skipped ${skipped} existing).`);
 }
 
 async function run() {
   try {
+    const start = Date.now();
     await migrateCustomers();
     await migratePets();
     await migrateBills();
-    console.log('Migration complete!');
+    const duration = (Date.now() - start) / 1000;
+    console.log(`Syncing complete in ${duration}s!`);
   } catch (err) {
-    console.error('Migration failed:', err);
+    console.error('Syncing failed:', err);
   }
 }
 

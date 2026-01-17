@@ -13,6 +13,9 @@ yarn.lock
 .DS_Store
 Thumbs.db
 
+# Debug
+.vscode
+
 # Env
 .env
 .env.*
