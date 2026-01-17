@@ -75,6 +75,21 @@ export default [
     }
   },
 
+  // Scripts configuration
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly'
+      }
+    },
+    rules: {
+      'no-console': 'off',
+      'no-undef': 'off' // Allow process and other node globals if not explicitly defined
+    }
+  },
+
   // Prettier integration (must be last)
   prettier,
 
