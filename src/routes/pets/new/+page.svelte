@@ -6,19 +6,19 @@
   }
 </script>
 
-<svelte:head><title>Add pet · Pawline</title></svelte:head>
+<svelte:head><title>Thêm thú cưng · Pawline</title></svelte:head>
 <div class="page-header">
   <div>
-    <a class="muted-link" href="/pets">← Back to pets</a>
-    <p class="eyebrow" style="margin-top:18px">Every profile helps</p>
-    <h1>Add pet</h1>
-    <p class="page-subtitle">Give the team the essentials they need to care well.</p>
+    <a class="muted-link" href="/pets">← Quay lại thú cưng</a>
+    <p class="eyebrow" style="margin-top:18px">Mỗi hồ sơ đều hữu ích</p>
+    <h1>Thêm thú cưng</h1>
+    <p class="page-subtitle">Cung cấp những thông tin cần thiết để đội ngũ chăm sóc tốt hơn.</p>
   </div>
 </div>
 {#if saved}<div class="success-banner">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg><span
-      >Pet profile saved locally in this demo.</span
-    ><a class="muted-link" href="/pets">View directory →</a>
+      >Hồ sơ thú cưng đã được lưu cục bộ trong bản mẫu này.</span
+    ><a class="muted-link" href="/pets">Xem danh bạ →</a>
   </div>{/if}
 <section class="card detail-card" style="max-width:760px">
   <form
@@ -29,43 +29,45 @@
   >
     <div class="form-grid">
       <div class="form-field">
-        <label for="name">Pet name</label><input
+        <label for="name">Tên thú cưng</label><input
           id="name"
           class="input-field"
           required
-          placeholder="e.g. Miso"
+          placeholder="ví dụ: Miso"
         />
       </div>
       <div class="form-field">
-        <label for="owner">Owner</label><select id="owner" class="select-field input-field"
+        <label for="owner">Chủ nuôi</label><select id="owner" class="select-field input-field"
           >{#each customers as customer}<option value={customer.id}>{customer.name}</option
             >{/each}</select
         >
       </div>
       <div class="form-field">
-        <label for="species">Species</label><select id="species" class="select-field input-field"
-          ><option>Dog</option><option>Cat</option><option>Rabbit</option></select
+        <label for="species">Loài</label><select id="species" class="select-field input-field"
+          ><option value="Dog">Chó</option><option value="Cat">Mèo</option><option value="Rabbit"
+            >Thỏ</option
+          ></select
         >
       </div>
       <div class="form-field">
-        <label for="breed">Breed</label><input
+        <label for="breed">Giống</label><input
           id="breed"
           class="input-field"
-          placeholder="e.g. Toy Poodle"
+          placeholder="ví dụ: Toy Poodle"
         />
       </div>
       <div class="form-field full">
-        <label for="note">Care note</label><textarea
+        <label for="note">Ghi chú chăm sóc</label><textarea
           id="note"
           class="input-field"
           rows="3"
-          placeholder="Anything the team should remember?"
+          placeholder="Đội ngũ cần nhớ điều gì?"
         ></textarea>
       </div>
     </div>
     <div class="form-actions">
-      <a class="btn-secondary" href="/pets">Cancel</a><button class="btn-primary" type="submit"
-        >Save pet profile</button
+      <a class="btn-secondary" href="/pets">Hủy</a><button class="btn-primary" type="submit"
+        >Lưu hồ sơ thú cưng</button
       >
     </div>
   </form>

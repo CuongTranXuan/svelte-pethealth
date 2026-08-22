@@ -25,3 +25,11 @@ Verified routes include `/dashboard`, `/orders`, `/orders/new`, `/customers`, `/
 ## Notes
 
 The temporary Vite configuration allows the exposed sandbox host for local testing. Demo forms are intentionally local and do not process payments or persist data. Supabase/Firebase integration remains available for a future backend pass. npm reported 35 dependency vulnerabilities during installation; those findings are pre-existing dependency audit output and were not changed as part of this UI reimplementation.
+
+## Vietnamese localization verification
+
+The live `/dashboard` route was refreshed after the localization build. Navigation, headings, date formatting, currency formatting, payment badges, and fulfillment badges rendered in Vietnamese. The test also confirmed the earlier HMR parser overlay was gone after the order-detail page was repaired. Some product fixture names and chart labels remain English in this pass and are candidates for a follow-up content polish; core navigation and operational UI are localized.
+
+The live Orders page shows the Vietnamese headings and localized status badges. A stale Vite overlay reported a table text-node placement error from an earlier hot-reload state; the current source inspected at the same table lines is structurally valid. The payment filter still has one untranslated `Overdue` option and is being corrected before the final refresh.
+
+The final refresh of `/dashboard` confirmed the Vietnamese default end-to-end: navigation, headings, CTA labels, currency/date formats, chart labels, product names, stock labels, table headings, and payment/fulfillment statuses are localized. The final `/orders` refresh confirmed the Vietnamese payment filter options and table copy render without the Vite overlay.

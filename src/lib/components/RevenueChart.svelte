@@ -36,8 +36,8 @@
 
 {#if showSummary}
   <div class="chart-summary">
-    <strong>{formatCompactCurrency(totalRevenue)}</strong><span>+12.8% vs last period</span><span
-      style="color:#9aa59f;font-weight:500">{totalOrders} orders</span
+    <strong>{formatCompactCurrency(totalRevenue)}</strong><span>+12,8% so với kỳ trước</span><span
+      style="color:#9aa59f;font-weight:500">{totalOrders} đơn hàng</span
     >
   </div>
 {/if}
@@ -45,7 +45,7 @@
   class="chart-svg"
   viewBox="0 0 {chartWidth} {chartHeight}"
   role="img"
-  aria-label="Revenue trend chart"
+  aria-label="Biểu đồ xu hướng doanh thu"
 >
   <defs>
     <linearGradient id="revenue-fill" x1="0" x2="0" y1="0" y2="1">

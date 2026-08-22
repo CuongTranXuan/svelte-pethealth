@@ -5,19 +5,19 @@
   }
 </script>
 
-<svelte:head><title>Add customer · Pawline</title></svelte:head>
+<svelte:head><title>Thêm khách hàng · Pawline</title></svelte:head>
 <div class="page-header">
   <div>
-    <a class="muted-link" href="/customers">← Back to customers</a>
-    <p class="eyebrow" style="margin-top:18px">Start with a name</p>
-    <h1>Add customer</h1>
-    <p class="page-subtitle">Create a simple profile for a new pet family.</p>
+    <a class="muted-link" href="/customers">← Quay lại khách hàng</a>
+    <p class="eyebrow" style="margin-top:18px">Bắt đầu từ một cái tên</p>
+    <h1>Thêm khách hàng</h1>
+    <p class="page-subtitle">Tạo hồ sơ đơn giản cho một gia đình thú cưng mới.</p>
   </div>
 </div>
 {#if saved}<div class="success-banner">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg><span
-      >Customer saved locally in this demo.</span
-    ><a class="muted-link" href="/customers">View directory →</a>
+      >Khách hàng đã được lưu cục bộ trong bản mẫu này.</span
+    ><a class="muted-link" href="/customers">Xem danh bạ →</a>
   </div>{/if}
 <section class="card detail-card" style="max-width:760px">
   <form
@@ -52,16 +52,16 @@
         />
       </div>
       <div class="form-field">
-        <label for="city">Location</label><input
+        <label for="city">Khu vực</label><input
           id="city"
           class="input-field"
-          placeholder="District 1, HCMC"
+          placeholder="Quận 1, TP. HCM"
         />
       </div>
     </div>
     <div class="form-actions">
-      <a class="btn-secondary" href="/customers">Cancel</a><button class="btn-primary" type="submit"
-        >Save customer</button
+      <a class="btn-secondary" href="/customers">Hủy</a><button class="btn-primary" type="submit"
+        >Lưu khách hàng</button
       >
     </div>
   </form>

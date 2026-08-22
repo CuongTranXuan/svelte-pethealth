@@ -22,21 +22,21 @@
   }
 </script>
 
-<svelte:head><title>New order · Pawline</title></svelte:head>
+<svelte:head><title>Tạo đơn hàng · Pawline</title></svelte:head>
 
 <div class="page-header">
   <div>
-    <a class="muted-link" href="/orders">← Back to orders</a>
-    <p class="eyebrow" style="margin-top:18px">Create something simple</p>
-    <h1>New order</h1>
-    <p class="page-subtitle">Add a store item or care service to a customer’s record.</p>
+    <a class="muted-link" href="/orders">← Quay lại đơn hàng</a>
+    <p class="eyebrow" style="margin-top:18px">Tạo thật đơn giản</p>
+    <h1>Tạo đơn hàng</h1>
+    <p class="page-subtitle">Thêm sản phẩm hoặc dịch vụ chăm sóc vào hồ sơ khách hàng.</p>
   </div>
 </div>
 
 {#if submitted}<div class="success-banner">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg><span
-      >Draft order saved locally. It is ready for review in this demo workspace.</span
-    ><a class="muted-link" href="/orders">View orders →</a>
+      >Đơn nháp đã được lưu cục bộ. Bạn có thể xem lại trong không gian mẫu này.</span
+    ><a class="muted-link" href="/orders">Xem đơn hàng →</a>
   </div>{/if}
 
 <section class="card detail-card" style="max-width:760px">
@@ -48,7 +48,7 @@
   >
     <div class="form-grid">
       <div class="form-field">
-        <label for="customer">Customer</label><select
+        <label for="customer">Khách hàng</label><select
           id="customer"
           class="select-field input-field"
           bind:value={customerId}
@@ -58,7 +58,7 @@
         >
       </div>
       <div class="form-field">
-        <label for="pet">Pet</label><select
+        <label for="pet">Thú cưng</label><select
           id="pet"
           class="select-field input-field"
           bind:value={petId}
@@ -67,7 +67,7 @@
         >
       </div>
       <div class="form-field full">
-        <label for="product">Product or service</label><select
+        <label for="product">Sản phẩm hoặc dịch vụ</label><select
           id="product"
           class="select-field input-field"
           bind:value={productId}
@@ -77,7 +77,7 @@
         >
       </div>
       <div class="form-field">
-        <label for="quantity">Quantity</label><input
+        <label for="quantity">Số lượng</label><input
           id="quantity"
           class="input-field"
           type="number"
@@ -87,11 +87,12 @@
         />
       </div>
       <div class="form-field">
-        <label for="payment">Payment status</label><select
+        <label for="payment">Trạng thái thanh toán</label><select
           id="payment"
           class="select-field input-field"
           bind:value={paymentStatus}
-          ><option>Pending</option><option>Paid</option><option>Overdue</option></select
+          ><option value="Pending">Chờ thanh toán</option><option value="Paid">Đã thanh toán</option
+          ><option value="Overdue">Quá hạn</option></select
         >
       </div>
     </div>
@@ -99,16 +100,16 @@
       style="background:#f7f9f7;border-radius:10px;padding:16px;margin-top:20px;display:flex;justify-content:space-between;align-items:center"
     >
       <div>
-        <span class="row-subtext" style="margin:0 0 5px">Order total</span><strong
+        <span class="row-subtext" style="margin:0 0 5px">Tổng đơn hàng</span><strong
           style="font-family:'Space Grotesk',sans-serif;font-size:22px"
           >{formatCurrency(total)}</strong
         >
       </div>
-      <span class="row-subtext" style="margin:0">Demo data · no payment is processed</span>
+      <span class="row-subtext" style="margin:0">Dữ liệu mẫu · chưa xử lý thanh toán</span>
     </div>
     <div class="form-actions">
       <a class="btn-secondary" href="/orders">Cancel</a><button class="btn-primary" type="submit"
-        >Save draft order</button
+        >Lưu đơn nháp</button
       >
     </div>
   </form>

@@ -6,5 +6,5 @@
 </script>
 
 <div class="empty-state">
-  <strong>Opening a new order</strong>Bill creation now lives in one simple workflow…
+  <strong>Đang mở đơn hàng mới</strong>Tạo hóa đơn giờ nằm trong một quy trình đơn giản…
 </div>

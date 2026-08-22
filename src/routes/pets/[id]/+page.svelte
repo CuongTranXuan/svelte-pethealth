@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { pets, customers, orders } from '$lib/data/pawline';
-  import { formatCurrency, formatDate } from '$lib/utils/format';
+  import { formatCurrency, formatDate, translateSpecies } from '$lib/utils/format';
 
   const pet = $derived(pets.find(item => item.id === page.params.id));
   const owner = $derived(pet ? customers.find(item => item.id === pet.customerId) : undefined);
@@ -12,17 +12,18 @@
   );
 </script>
 
-<svelte:head><title>{pet ? `${pet.name} · Pawline` : 'Pet not found · Pawline'}</title></svelte:head
+<svelte:head
+  ><title>{pet ? `${pet.name} · Pawline` : 'Không tìm thấy thú cưng · Pawline'}</title></svelte:head
 >
 {#if pet}
   <div class="page-header">
     <div>
-      <a class="muted-link" href="/pets">← Back to pets</a>
-      <p class="eyebrow" style="margin-top:18px">Pet profile</p>
+      <a class="muted-link" href="/pets">← Quay lại thú cưng</a>
+      <p class="eyebrow" style="margin-top:18px">Hồ sơ thú cưng</p>
       <h1>{pet.name}</h1>
-      <p class="page-subtitle">The care context your team can act on at a glance.</p>
+      <p class="page-subtitle">Thông tin chăm sóc để đội ngũ có thể hành động ngay.</p>
     </div>
-    <a class="btn-secondary" href="/customers/{pet.customerId}">View owner</a>
+    <a class="btn-secondary" href="/customers/{pet.customerId}">Xem chủ nuôi</a>
   </div>
   <div class="detail-grid">
     <section class="card detail-card">
@@ -40,43 +41,43 @@
       </div>
       <dl class="detail-list">
         <div>
-          <dt>Species</dt>
-          <dd>{pet.species}</dd>
+          <dt>Loài</dt>
+          <dd>{translateSpecies(pet.species)}</dd>
         </div>
         <div>
-          <dt>Breed</dt>
+          <dt>Giống</dt>
           <dd>{pet.breed}</dd>
         </div>
         <div>
-          <dt>Owner</dt>
+          <dt>Chủ nuôi</dt>
           <dd><a class="muted-link" href="/customers/{pet.customerId}">{pet.customerName}</a></dd>
         </div>
         <div>
-          <dt>Last visit</dt>
+          <dt>Lần ghé gần nhất</dt>
           <dd>{formatDate(pet.lastVisit)}</dd>
         </div>
       </dl>
       <div
         style="margin-top:22px;background:#fff8ed;border:1px solid #f5dfbb;border-radius:10px;padding:13px"
       >
-        <div class="eyebrow" style="color:#b7782e;margin-bottom:5px">Care note</div>
+        <div class="eyebrow" style="color:#b7782e;margin-bottom:5px">Ghi chú chăm sóc</div>
         <div style="font-size:12px;color:#80613e;line-height:1.55">{pet.careNote}</div>
       </div>
     </section>
     <aside class="card detail-card">
-      <h2>Pet spending</h2>
+      <h2>Chi tiêu cho thú cưng</h2>
       <div class="metric-value" style="margin:15px 0 5px">
         {formatCurrency(petOrders.reduce((sum, order) => sum + order.total, 0))}
       </div>
-      <p class="page-subtitle">{petOrders.length} related orders</p>
+      <p class="page-subtitle">{petOrders.length} đơn hàng liên quan</p>
       <div style="height:1px;background:#eef2ef;margin:21px 0"></div>
-      <h3>Owner contact</h3>
+      <h3>Liên hệ chủ nuôi</h3>
       <p class="page-subtitle" style="color:#4c5c54;margin-top:10px">{owner?.phone}</p>
       <p class="page-subtitle" style="margin-top:4px">{owner?.email}</p>
     </aside>
   </div>
 {:else}<div class="empty-state">
-    <strong>That pet has wandered off.</strong><a class="muted-link" href="/pets"
-      >Return to pets →</a
+    <strong>Thú cưng này không còn tồn tại.</strong><a class="muted-link" href="/pets"
+      >Quay lại thú cưng →</a
     >
   </div>{/if}

@@ -19,12 +19,12 @@
 {#if customer}
   <div class="page-header">
     <div>
-      <a class="muted-link" href="/customers">← Back to customers</a>
-      <p class="eyebrow" style="margin-top:18px">Customer profile</p>
+      <a class="muted-link" href="/customers">← Quay lại khách hàng</a>
+      <p class="eyebrow" style="margin-top:18px">Hồ sơ khách hàng</p>
       <h1>{customer.name}</h1>
-      <p class="page-subtitle">A little context helps every interaction feel personal.</p>
+      <p class="page-subtitle">Một chút thông tin giúp mỗi lần tương tác trở nên gần gũi hơn.</p>
     </div>
-    <a class="btn-secondary" href="/orders/new">Create order</a>
+    <a class="btn-secondary" href="/orders/new">Tạo đơn hàng</a>
   </div>
   <div class="detail-grid">
     <section class="card detail-card">
@@ -37,7 +37,7 @@
       </div>
       <dl class="detail-list">
         <div>
-          <dt>Phone</dt>
+          <dt>Điện thoại</dt>
           <dd>{customer.phone}</dd>
         </div>
         <div>
@@ -45,24 +45,24 @@
           <dd>{customer.email}</dd>
         </div>
         <div>
-          <dt>Location</dt>
+          <dt>Khu vực</dt>
           <dd>{customer.city}</dd>
         </div>
         <div>
-          <dt>Last visit</dt>
+          <dt>Lần ghé gần nhất</dt>
           <dd>{formatDate(customer.lastVisit)}</dd>
         </div>
         <div>
-          <dt>Total spent</dt>
+          <dt>Tổng chi tiêu</dt>
           <dd>{formatCurrency(customer.totalSpent)}</dd>
         </div>
       </dl>
     </section>
     <section class="card detail-card">
       <h2>
-        Pet family <span
+        Gia đình thú cưng <span
           style="color:#96a49d;font-size:12px;font-family:'DM Sans',sans-serif;letter-spacing:0"
-          >{customerPets.length} profiles</span
+          >{customerPets.length} hồ sơ</span
         >
       </h2>
       <div class="alert-list" style="padding:0">
@@ -76,7 +76,7 @@
             <div class="alert-name">
               <strong>{pet.name}</strong><span>{pet.breed} · {pet.age}</span>
             </div>
-            <span class="muted-link">View →</span></a
+            <span class="muted-link">Xem →</span></a
           >{/each}
       </div>
     </section>
@@ -84,22 +84,26 @@
   <section class="card table-card">
     <div class="card-header">
       <div>
-        <h2>Recent order history</h2>
-        <p class="page-subtitle">A simple record of how this family shops and cares.</p>
+        <h2>Lịch sử đơn hàng gần đây</h2>
+        <p class="page-subtitle">Ghi lại cách gia đình này mua sắm và chăm sóc thú cưng.</p>
       </div>
     </div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead
-          ><tr
-            ><th>Order</th><th>Customer & pet</th><th>Amount</th><th>Payment</th><th>Fulfillment</th
-            ></tr
-          ></thead
-        ><tbody
+        <thead>
+          <tr>
+            <th>Đơn hàng</th>
+            <th>Khách hàng & thú cưng</th>
+            <th>Số tiền</th>
+            <th>Thanh toán</th>
+            <th>Trạng thái nhận hàng</th>
+          </tr>
+        </thead>
+        <tbody
           >{#each customerOrders as order}<OrderRow {order} />{:else}<tr
               ><td colspan="5"
                 ><div class="empty-state">
-                  <strong>No orders yet</strong>This profile is ready for its first order.
+                  <strong>Chưa có đơn hàng</strong>Hồ sơ này đã sẵn sàng cho đơn hàng đầu tiên.
                 </div></td
               ></tr
             >{/each}</tbody
@@ -108,7 +112,7 @@
     </div>
   </section>
 {:else}<div class="empty-state">
-    <strong>That customer has wandered off.</strong><a class="muted-link" href="/customers"
-      >Return to customers →</a
+    <strong>Khách hàng này không còn tồn tại.</strong><a class="muted-link" href="/customers"
+      >Quay lại khách hàng →</a
     >
   </div>{/if}

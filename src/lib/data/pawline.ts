@@ -149,7 +149,7 @@ export const pets: Pet[] = [
     customerName: 'Linh Nguyen',
     color: '#f4b183',
     lastVisit: '2026-08-20',
-    careNote: 'Sensitive stomach. Prefers salmon-based food.',
+    careNote: 'Dạ dày nhạy cảm. Hợp với thức ăn từ cá hồi.',
   },
   {
     id: 'pet-002',
@@ -161,7 +161,7 @@ export const pets: Pet[] = [
     customerName: 'Linh Nguyen',
     color: '#d8c7b8',
     lastVisit: '2026-08-16',
-    careNote: 'Due for a coat care check next month.',
+    careNote: 'Tháng sau nên kiểm tra và chăm sóc lông.',
   },
   {
     id: 'pet-003',
@@ -173,7 +173,7 @@ export const pets: Pet[] = [
     customerName: 'Minh Tran',
     color: '#dba87c',
     lastVisit: '2026-08-18',
-    careNote: 'Regular dental chew customer.',
+    careNote: 'Thường dùng bánh nhai chăm sóc răng.',
   },
   {
     id: 'pet-004',
@@ -185,7 +185,7 @@ export const pets: Pet[] = [
     customerName: 'An Pham',
     color: '#8bb7a4',
     lastVisit: '2026-08-14',
-    careNote: 'Indoor cat. Keep flea care monthly.',
+    careNote: 'Mèo nuôi trong nhà. Duy trì chăm sóc ve rận mỗi tháng.',
   },
   {
     id: 'pet-005',
@@ -197,7 +197,7 @@ export const pets: Pet[] = [
     customerName: 'An Pham',
     color: '#b4a0d8',
     lastVisit: '2026-08-11',
-    careNote: 'Hay-first diet. Nail trim every 6 weeks.',
+    careNote: 'Ưu tiên khẩu phần cỏ khô. Cắt móng mỗi 6 tuần.',
   },
   {
     id: 'pet-006',
@@ -209,7 +209,7 @@ export const pets: Pet[] = [
     customerName: 'An Pham',
     color: '#e8c06f',
     lastVisit: '2026-08-09',
-    careNote: 'Senior joint support recommended.',
+    careNote: 'Nên bổ sung hỗ trợ xương khớp cho thú cưng lớn tuổi.',
   },
   {
     id: 'pet-007',
@@ -221,7 +221,7 @@ export const pets: Pet[] = [
     customerName: 'Thao Le',
     color: '#d78355',
     lastVisit: '2026-08-08',
-    careNote: 'Grooming appointment completed.',
+    careNote: 'Đã hoàn tất buổi chăm sóc lông.',
   },
   {
     id: 'pet-008',
@@ -233,7 +233,7 @@ export const pets: Pet[] = [
     customerName: 'Khoa Vo',
     color: '#91abc9',
     lastVisit: '2026-08-02',
-    careNote: 'Prefers quiet handling and wet food.',
+    careNote: 'Thích được chăm sóc nhẹ nhàng và ăn thức ăn ướt.',
   },
 ];
 
@@ -244,7 +244,7 @@ export const orders: Order[] = [
     customerName: 'Linh Nguyen',
     petName: 'Milo',
     date: '2026-08-22',
-    items: [{ name: 'Salmon sensitive care food', quantity: 1, price: 485000 }],
+    items: [{ name: 'Thức ăn cá hồi cho dạ dày nhạy cảm', quantity: 1, price: 485000 }],
     total: 485000,
     paymentStatus: 'Paid',
     fulfillmentStatus: 'Ready',
@@ -256,8 +256,8 @@ export const orders: Order[] = [
     petName: 'Nori',
     date: '2026-08-22',
     items: [
-      { name: 'Monthly flea care', quantity: 2, price: 285000 },
-      { name: 'Cotton rope toy', quantity: 1, price: 120000 },
+      { name: 'Gói chăm sóc ve rận tháng', quantity: 2, price: 285000 },
+      { name: 'Đồ chơi dây cotton', quantity: 1, price: 120000 },
     ],
     total: 690000,
     paymentStatus: 'Pending',
@@ -269,7 +269,7 @@ export const orders: Order[] = [
     customerName: 'Minh Tran',
     petName: 'Bơ',
     date: '2026-08-21',
-    items: [{ name: 'Dental care chews', quantity: 2, price: 175000 }],
+    items: [{ name: 'Bánh nhai chăm sóc răng', quantity: 2, price: 175000 }],
     total: 350000,
     paymentStatus: 'Paid',
     fulfillmentStatus: 'Completed',
@@ -281,8 +281,8 @@ export const orders: Order[] = [
     petName: 'Luna',
     date: '2026-08-20',
     items: [
-      { name: 'Indoor cat food', quantity: 1, price: 390000 },
-      { name: 'Soft grooming brush', quantity: 1, price: 198000 },
+      { name: 'Thức ăn cho mèo nuôi trong nhà', quantity: 1, price: 390000 },
+      { name: 'Bàn chải chải lông mềm', quantity: 1, price: 198000 },
     ],
     total: 588000,
     paymentStatus: 'Overdue',
@@ -305,7 +305,7 @@ export const orders: Order[] = [
     customerName: 'Mai Hoang',
     petName: 'Kiki',
     date: '2026-08-18',
-    items: [{ name: 'Puppy starter bundle', quantity: 1, price: 890000 }],
+    items: [{ name: 'Bộ sản phẩm khởi đầu cho cún', quantity: 1, price: 890000 }],
     total: 890000,
     paymentStatus: 'Pending',
     fulfillmentStatus: 'Processing',
@@ -316,7 +316,7 @@ export const orders: Order[] = [
     customerName: 'Linh Nguyen',
     petName: 'Mochi',
     date: '2026-08-17',
-    items: [{ name: 'Coat care set', quantity: 1, price: 310000 }],
+    items: [{ name: 'Bộ chăm sóc lông', quantity: 1, price: 310000 }],
     total: 310000,
     paymentStatus: 'Paid',
     fulfillmentStatus: 'Completed',
@@ -327,7 +327,7 @@ export const orders: Order[] = [
     customerName: 'An Pham',
     petName: 'Taro',
     date: '2026-08-16',
-    items: [{ name: 'Timothy hay premium', quantity: 2, price: 225000 }],
+    items: [{ name: 'Cỏ Timothy cao cấp', quantity: 2, price: 225000 }],
     total: 450000,
     paymentStatus: 'Paid',
     fulfillmentStatus: 'Completed',
@@ -337,7 +337,7 @@ export const orders: Order[] = [
 export const products: Product[] = [
   {
     id: 'prd-001',
-    name: 'Salmon sensitive care food',
+    name: 'Thức ăn cá hồi cho dạ dày nhạy cảm',
     category: 'Food',
     price: 485000,
     stock: 7,
@@ -347,7 +347,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-002',
-    name: 'Indoor cat food',
+    name: 'Thức ăn cho mèo nuôi trong nhà',
     category: 'Food',
     price: 390000,
     stock: 24,
@@ -357,7 +357,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-003',
-    name: 'Dental care chews',
+    name: 'Bánh nhai chăm sóc răng',
     category: 'Wellness',
     price: 175000,
     stock: 5,
@@ -367,7 +367,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-004',
-    name: 'Monthly flea care',
+    name: 'Gói chăm sóc ve rận tháng',
     category: 'Wellness',
     price: 285000,
     stock: 18,
@@ -377,7 +377,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-005',
-    name: 'Soft grooming brush',
+    name: 'Bàn chải chải lông mềm',
     category: 'Care',
     price: 198000,
     stock: 14,
@@ -387,7 +387,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-006',
-    name: 'Cotton rope toy',
+    name: 'Đồ chơi dây cotton',
     category: 'Accessories',
     price: 120000,
     stock: 3,
@@ -397,7 +397,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-007',
-    name: 'Puppy starter bundle',
+    name: 'Bộ sản phẩm khởi đầu cho cún',
     category: 'Food',
     price: 890000,
     stock: 0,
@@ -407,7 +407,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-008',
-    name: 'Timothy hay premium',
+    name: 'Cỏ Timothy cao cấp',
     category: 'Food',
     price: 225000,
     stock: 16,
@@ -417,7 +417,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-009',
-    name: 'Coat care set',
+    name: 'Bộ chăm sóc lông',
     category: 'Care',
     price: 310000,
     stock: 9,
@@ -427,7 +427,7 @@ export const products: Product[] = [
   },
   {
     id: 'prd-010',
-    name: 'Joint support bites',
+    name: 'Bánh nhai hỗ trợ xương khớp',
     category: 'Wellness',
     price: 420000,
     stock: 4,
@@ -439,23 +439,23 @@ export const products: Product[] = [
 
 export const revenueByPeriod: Record<string, RevenuePoint[]> = {
   '7d': [
-    { label: 'Mon', revenue: 3200000, orders: 12 },
-    { label: 'Tue', revenue: 4100000, orders: 15 },
-    { label: 'Wed', revenue: 3650000, orders: 13 },
-    { label: 'Thu', revenue: 5200000, orders: 18 },
-    { label: 'Fri', revenue: 4480000, orders: 16 },
-    { label: 'Sat', revenue: 6100000, orders: 23 },
-    { label: 'Sun', revenue: 5740000, orders: 19 },
+    { label: 'T2', revenue: 3200000, orders: 12 },
+    { label: 'T3', revenue: 4100000, orders: 15 },
+    { label: 'T4', revenue: 3650000, orders: 13 },
+    { label: 'T5', revenue: 5200000, orders: 18 },
+    { label: 'T6', revenue: 4480000, orders: 16 },
+    { label: 'T7', revenue: 6100000, orders: 23 },
+    { label: 'CN', revenue: 5740000, orders: 19 },
   ],
   '30d': [
-    { label: 'W1', revenue: 19400000, orders: 68 },
-    { label: 'W2', revenue: 23100000, orders: 79 },
-    { label: 'W3', revenue: 26700000, orders: 88 },
-    { label: 'W4', revenue: 32470000, orders: 104 },
+    { label: 'Tuần 1', revenue: 19400000, orders: 68 },
+    { label: 'Tuần 2', revenue: 23100000, orders: 79 },
+    { label: 'Tuần 3', revenue: 26700000, orders: 88 },
+    { label: 'Tuần 4', revenue: 32470000, orders: 104 },
   ],
   quarter: [
-    { label: 'Jun', revenue: 58900000, orders: 218 },
-    { label: 'Jul', revenue: 72600000, orders: 264 },
-    { label: 'Aug', revenue: 96870000, orders: 311 },
+    { label: 'Th6', revenue: 58900000, orders: 218 },
+    { label: 'Th7', revenue: 72600000, orders: 264 },
+    { label: 'Th8', revenue: 96870000, orders: 311 },
   ],
 };

@@ -6,11 +6,11 @@
   let menuOpen = $state(false);
 
   const navigation = [
-    { href: '/dashboard', label: 'Overview', icon: 'grid' },
-    { href: '/orders', label: 'Orders & bills', icon: 'receipt' },
-    { href: '/customers', label: 'Customers & pets', icon: 'users' },
-    { href: '/products', label: 'Products', icon: 'package' },
-    { href: '/statistics', label: 'Analytics', icon: 'chart' },
+    { href: '/dashboard', label: 'Tổng quan', icon: 'grid' },
+    { href: '/orders', label: 'Đơn hàng & hóa đơn', icon: 'receipt' },
+    { href: '/customers', label: 'Khách hàng & thú cưng', icon: 'users' },
+    { href: '/products', label: 'Sản phẩm', icon: 'package' },
+    { href: '/statistics', label: 'Phân tích', icon: 'chart' },
   ];
 
   function isActive(href: string) {
@@ -24,12 +24,12 @@
       <div class="brand-mark">P</div>
       <div>
         <div class="brand-name">Pawline</div>
-        <div class="brand-caption">Pet care, made simple</div>
+        <div class="brand-caption">Chăm sóc thú cưng, thật đơn giản</div>
       </div>
     </div>
 
-    <div class="workspace-label">Workspace</div>
-    <nav aria-label="Main navigation">
+    <div class="workspace-label">Không gian làm việc</div>
+    <nav aria-label="Điều hướng chính">
       {#each navigation as item}
         <a class:active={isActive(item.href)} href={item.href} onclick={() => (menuOpen = false)}>
           {#if item.icon === 'grid'}
@@ -75,30 +75,30 @@
     <div class="sidebar-footnote">
       <div class="footnote-icon">✦</div>
       <div>
-        <strong>Keep it caring</strong>
-        <p>Small moments make every visit better.</p>
+        <strong>Luôn tận tâm</strong>
+        <p>Mỗi khoảnh khắc nhỏ đều làm trải nghiệm tốt hơn.</p>
       </div>
     </div>
   </aside>
 
   {#if menuOpen}
-    <button class="scrim" aria-label="Close navigation" onclick={() => (menuOpen = false)}></button>
+    <button class="scrim" aria-label="Đóng điều hướng" onclick={() => (menuOpen = false)}></button>
   {/if}
 
   <div class="main-column">
     <header class="topbar">
-      <button class="menu-toggle" aria-label="Open navigation" onclick={() => (menuOpen = true)}>
+      <button class="menu-toggle" aria-label="Mở điều hướng" onclick={() => (menuOpen = true)}>
         <span></span><span></span><span></span>
       </button>
       <div class="topbar-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"
           ><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg
         >
-        <span>Search anything</span>
+        <span>Tìm kiếm</span>
         <kbd>⌘ K</kbd>
       </div>
       <div class="topbar-actions">
-        <button class="icon-button" aria-label="View notifications">
+        <button class="icon-button" aria-label="Xem thông báo">
           <svg viewBox="0 0 24 24" aria-hidden="true"
             ><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8M10 21h4" /></svg
           >

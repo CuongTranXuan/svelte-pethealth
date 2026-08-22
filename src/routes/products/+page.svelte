@@ -1,7 +1,7 @@
 <script lang="ts">
   import StatusBadge from '$lib/components/StatusBadge.svelte';
   import { products } from '$lib/data/pawline';
-  import { formatCurrency } from '$lib/utils/format';
+  import { formatCurrency, translateCategory, translateProductStatus } from '$lib/utils/format';
 
   let search = $state('');
   let category = $state('All');
@@ -20,18 +20,18 @@
   }
 </script>
 
-<svelte:head><title>Products · Pawline</title></svelte:head>
+<svelte:head><title>Sản phẩm · Pawline</title></svelte:head>
 <div class="page-header">
   <div>
-    <p class="eyebrow">Healthy shelves, healthy business</p>
-    <h1>Products & inventory</h1>
-    <p class="page-subtitle">See what is moving, what is low, and what needs a closer look.</p>
+    <p class="eyebrow">Kệ hàng khỏe, kinh doanh khỏe</p>
+    <h1>Sản phẩm & tồn kho</h1>
+    <p class="page-subtitle">Biết sản phẩm nào đang bán chạy, sắp hết và cần được chú ý.</p>
   </div>
   <button
     class="btn-primary"
     type="button"
     onclick={() => (restockMessage = 'Product creation is ready for the catalog backend pass.')}
-    >+ Add product</button
+    >+ Thêm sản phẩm</button
   >
 </div>
 {#if restockMessage}<div class="success-banner" style="margin-top:-10px">
@@ -39,54 +39,56 @@
   </div>{/if}
 <div class="metric-grid">
   <div class="card metric-card">
-    <div class="metric-label">Total products</div>
+    <div class="metric-label">Tổng sản phẩm</div>
     <div class="metric-value">{products.length}</div>
-    <div class="metric-detail positive">Across 4 categories</div>
+    <div class="metric-detail positive">Thuộc 4 nhóm</div>
   </div>
   <div class="card metric-card">
-    <div class="metric-label">In stock</div>
+    <div class="metric-label">Còn hàng</div>
     <div class="metric-value">
       {products.filter(product => product.status === 'In stock').length}
     </div>
-    <div class="metric-detail positive">Ready to sell</div>
+    <div class="metric-detail positive">Sẵn sàng bán</div>
   </div>
   <div class="card metric-card">
-    <div class="metric-label">Low stock</div>
+    <div class="metric-label">Sắp hết</div>
     <div class="metric-value">
       {products.filter(product => product.status === 'Low stock').length}
     </div>
-    <div class="metric-detail attention">Reorder soon</div>
+    <div class="metric-detail attention">Sắp cần nhập thêm</div>
   </div>
   <div class="card metric-card">
-    <div class="metric-label">Out of stock</div>
+    <div class="metric-label">Hết hàng</div>
     <div class="metric-value">
       {products.filter(product => product.status === 'Out of stock').length}
     </div>
-    <div class="metric-detail danger">Needs action</div>
+    <div class="metric-detail danger">Cần xử lý</div>
   </div>
 </div>
 <section class="card table-card" style="margin-top:0">
   <div class="card-header">
     <div>
-      <h2>Product catalog</h2>
-      <p class="page-subtitle">Stock status is based on each product’s reorder level.</p>
+      <h2>Danh mục sản phẩm</h2>
+      <p class="page-subtitle">Trạng thái tồn kho dựa trên ngưỡng nhập thêm của từng sản phẩm.</p>
     </div>
   </div>
   <div class="toolbar">
     <label class="search-field" aria-label="Search products"
       ><svg viewBox="0 0 24 24" aria-hidden="true"
         ><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg
-      ><input bind:value={search} placeholder="Search products or SKU" /></label
+      ><input bind:value={search} placeholder="Tìm sản phẩm hoặc SKU" /></label
     ><select class="select-field" bind:value={category} aria-label="Filter by category"
-      ><option>All</option><option>Food</option><option>Care</option><option>Wellness</option
-      ><option>Accessories</option></select
+      ><option value="All">Tất cả</option><option value="Food">Thức ăn</option><option value="Care"
+        >Chăm sóc</option
+      ><option value="Wellness">Sức khỏe</option><option value="Accessories">Phụ kiện</option
+      ></select
     >
   </div>
   <div class="table-scroll">
     <table class="data-table">
       <thead
         ><tr
-          ><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Reorder at</th><th
+          ><th>Sản phẩm</th><th>Nhóm</th><th>Giá</th><th>Tồn kho</th><th>Nhập thêm khi còn</th><th
             >Status</th
           ></tr
         ></thead
@@ -96,15 +98,18 @@
               ><span class="row-name">{product.name}</span><span class="row-subtext"
                 >{product.sku}</span
               ></td
-            ><td>{product.category}</td><td class="row-name">{formatCurrency(product.price)}</td><td
-              class="row-name">{product.stock}</td
-            ><td>{product.reorderLevel}</td><td
-              ><StatusBadge label={product.status} tone={tone(product.status)} /></td
+            ><td>{translateCategory(product.category)}</td><td class="row-name"
+              >{formatCurrency(product.price)}</td
+            ><td class="row-name">{product.stock}</td><td>{product.reorderLevel}</td><td
+              ><StatusBadge
+                label={translateProductStatus(product.status)}
+                tone={tone(product.status)}
+              /></td
             ></tr
           >{:else}<tr
             ><td colspan="6"
               ><div class="empty-state">
-                <strong>No products found</strong>Try another search or category.
+                <strong>Không tìm thấy sản phẩm</strong>Hãy thử từ khóa hoặc nhóm khác.
               </div></td
             ></tr
           >{/each}</tbody

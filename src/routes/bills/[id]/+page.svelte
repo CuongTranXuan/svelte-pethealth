@@ -7,5 +7,5 @@
 </script>
 
 <div class="empty-state">
-  <strong>Opening the order record</strong>Taking you to the linked bill…
+  <strong>Đang mở hồ sơ đơn hàng</strong>Đang chuyển đến hóa đơn liên kết…
 </div>
