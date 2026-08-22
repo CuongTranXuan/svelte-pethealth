@@ -1,105 +1,65 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { supabase } from '$lib/supabase';
-  import Navbar from '$lib/components/Navbar.svelte';
-  import { user, loading as authLoading } from '$lib/stores/auth';
-  import { goto } from '$app/navigation';
+  import { pets } from '$lib/data/pawline';
 
-  let pets: any[] = [];
-  let loading = true; // This 'loading' is for pets data
-
-  async function fetchPets() {
-    loading = true; // Set loading to true when fetching starts
-    const { data, error } = await supabase
-      .from('pets')
-      .select(
-        `
-        *,
-        customers (name, phone)
-      `
-      )
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching pets:', error);
-    } else {
-      pets = data || [];
-    }
-    loading = false;
-  }
-
-  onMount(() => {
-    const unsubscribe = user.subscribe(u => {
-      if (!u && !$authLoading) {
-        goto('/login');
-      } else if (u) {
-        fetchPets();
-      }
-    });
-    return unsubscribe;
-  });
+  let search = $state('');
+  const filteredPets = $derived(
+    pets.filter(pet =>
+      `${pet.name} ${pet.customerName} ${pet.breed} ${pet.species}`
+        .toLowerCase()
+        .includes(search.trim().toLowerCase())
+    )
+  );
 </script>
 
-```svelte
-<div class="min-h-screen bg-gray-100">
-  <Navbar />
-
-  <main class="py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Thú Cưng</h1>
-        <a
-          href="/pets/new"
-          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Thêm Thú Cưng Mới
-        </a>
-      </div>
-
-      {#if loading}
-        <div class="text-center py-12">
-          <div class="spinner">Đang tải...</div>
-        </div>
-      {:else if pets.length === 0}
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6 text-center text-gray-500">
-          Không tìm thấy thú cưng nào.
-        </div>
-      {:else}
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul role="list" class="divide-y divide-gray-200">
-            {#each pets as pet}
-              <li>
-                <a href="/pets/{pet.id}" class="block hover:bg-gray-50">
-                  <div class="px-4 py-4 sm:px-6">
-                    <div class="flex items-center justify-between">
-                      <p class="text-sm font-medium text-indigo-600 truncate">{pet.name}</p>
-                      <div class="ml-2 flex-shrink-0 flex">
-                        <p
-                          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                        >
-                          {pet.species}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="mt-2 sm:flex sm:justify-between">
-                      <div class="sm:flex">
-                        <p class="flex items-center text-sm text-gray-500">
-                          Chủ: {pet.customers?.name} ({pet.customers?.phone})
-                        </p>
-                      </div>
-                      <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                        <p>
-                          {pet.gender} • {pet.age} tuổi
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              </li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-    </div>
-  </main>
+<svelte:head><title>Pets · Pawline</title></svelte:head>
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Every pet has a story</p>
+    <h1>Pet directory</h1>
+    <p class="page-subtitle">Find the right care context before the next conversation.</p>
+  </div>
+  <a class="btn-secondary" href="/customers">View customer directory</a>
 </div>
+<section class="card table-card" style="margin-top:0">
+  <div class="card-header">
+    <div>
+      <h2>All pets</h2>
+      <p class="page-subtitle">Search by pet, owner, species, or breed.</p>
+    </div>
+  </div>
+  <div class="toolbar">
+    <label class="search-field" aria-label="Search pets"
+      ><svg viewBox="0 0 24 24" aria-hidden="true"
+        ><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg
+      ><input bind:value={search} placeholder="Search pets or owners" /></label
+    >
+  </div>
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead
+        ><tr
+          ><th>Pet</th><th>Owner</th><th>Species & breed</th><th>Age</th><th>Last visit</th><th
+            >Care note</th
+          ></tr
+        ></thead
+      ><tbody
+        >{#each filteredPets as pet}<tr
+            ><td
+              ><a class="row-name" href="/pets/{pet.id}">{pet.name}</a><span class="row-subtext"
+                >Profile {pet.id}</span
+              ></td
+            ><td><a class="row-name" href="/customers/{pet.customerId}">{pet.customerName}</a></td
+            ><td>{pet.species}<span class="row-subtext">{pet.breed}</span></td><td>{pet.age}</td><td
+              >{pet.lastVisit}</td
+            ><td style="max-width:240px">{pet.careNote}</td></tr
+          >{:else}<tr
+            ><td colspan="6"
+              ><div class="empty-state">
+                <strong>No pets found</strong>Try another search term.
+              </div></td
+            ></tr
+          >{/each}</tbody
+      >
+    </table>
+  </div>
+</section>
