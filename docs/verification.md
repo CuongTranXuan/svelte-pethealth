@@ -37,3 +37,9 @@ The final refresh of `/dashboard` confirmed the Vietnamese default end-to-end: n
 ## Permanent hosting decision
 
 The source repository has a committed GitHub Pages workflow and static build configuration. The GitHub Pages API could not be enabled with the available repository token (`403 Resource not accessible by integration`). The account user-site at `https://cuongtranxuan.github.io/` is active but currently serves an existing FDM Face Detection Demo, so it should not be overwritten without explicit approval. The current permanent deployment step therefore requires either enabling Pages for `svelte-pethealth` in repository Settings → Pages with **GitHub Actions** as the source, or choosing a separate hosting account/domain.
+
+## Permanent deployment verification
+
+The GitHub Pages site is now live at `https://cuongtranxuan.github.io/svelte-pethealth/`. The root resolves to `/dashboard` and renders the Vietnamese Pawline overview. The `/orders` route also loads from the permanent URL; sidebar links, order links, filters, and the “Tạo đơn hàng” action all preserve the `/svelte-pethealth` base path. The successful workflow run is `32615366822` for commit `b604fe6`.
+
+The permanent `/statistics` route renders the Vietnamese analytics dashboard with period controls and chart. The permanent `/orders/new` route renders the Vietnamese draft-order form with customer, pet, product, quantity, payment, and save controls. Both routes load at the `/svelte-pethealth` project path without deployment errors.
