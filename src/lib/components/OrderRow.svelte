@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import type { Order } from '$lib/data/pawline';
   import {
     formatCurrency,
@@ -21,7 +22,7 @@
 
 <tr>
   <td>
-    <a class="row-name" href="/orders/{order.id}">{order.id}</a>
+    <a class="row-name" href={`${base}/orders/${order.id}`}>{order.id}</a>
     <span class="row-subtext">{formatDate(order.date)}</span>
   </td>
   <td>

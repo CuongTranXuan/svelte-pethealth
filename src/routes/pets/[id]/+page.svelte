@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { page } from '$app/state';
   import { pets, customers, orders } from '$lib/data/pawline';
   import { formatCurrency, formatDate, translateSpecies } from '$lib/utils/format';
@@ -18,12 +19,12 @@
 {#if pet}
   <div class="page-header">
     <div>
-      <a class="muted-link" href="/pets">← Quay lại thú cưng</a>
+      <a class="muted-link" href={base + '/pets'}>← Quay lại thú cưng</a>
       <p class="eyebrow" style="margin-top:18px">Hồ sơ thú cưng</p>
       <h1>{pet.name}</h1>
       <p class="page-subtitle">Thông tin chăm sóc để đội ngũ có thể hành động ngay.</p>
     </div>
-    <a class="btn-secondary" href="/customers/{pet.customerId}">Xem chủ nuôi</a>
+    <a class="btn-secondary" href={`${base}/customers/${pet.customerId}`}>Xem chủ nuôi</a>
   </div>
   <div class="detail-grid">
     <section class="card detail-card">
@@ -50,7 +51,10 @@
         </div>
         <div>
           <dt>Chủ nuôi</dt>
-          <dd><a class="muted-link" href="/customers/{pet.customerId}">{pet.customerName}</a></dd>
+          <dd>
+            <a class="muted-link" href={`${base}/customers/${pet.customerId}`}>{pet.customerName}</a
+            >
+          </dd>
         </div>
         <div>
           <dt>Lần ghé gần nhất</dt>
@@ -77,7 +81,7 @@
     </aside>
   </div>
 {:else}<div class="empty-state">
-    <strong>Thú cưng này không còn tồn tại.</strong><a class="muted-link" href="/pets"
+    <strong>Thú cưng này không còn tồn tại.</strong><a class="muted-link" href={base + '/pets'}
       >Quay lại thú cưng →</a
     >
   </div>{/if}

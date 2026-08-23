@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import { base } from '$app/paths';
   import type { Snippet } from 'svelte';
 
   const { children }: { children: Snippet } = $props();
@@ -14,7 +15,8 @@
   ];
 
   function isActive(href: string) {
-    return page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
+    const pathname = page.url.pathname.replace(new RegExp(`^${base}`), '') || '/';
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 </script>
 
@@ -31,7 +33,11 @@
     <div class="workspace-label">Không gian làm việc</div>
     <nav aria-label="Điều hướng chính">
       {#each navigation as item}
-        <a class:active={isActive(item.href)} href={item.href} onclick={() => (menuOpen = false)}>
+        <a
+          class:active={isActive(item.href)}
+          href={base + item.href}
+          onclick={() => (menuOpen = false)}
+        >
           {#if item.icon === 'grid'}
             <svg viewBox="0 0 24 24" aria-hidden="true"
               ><rect x="4" y="4" width="6" height="6" rx="1" /><rect

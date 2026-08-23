@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import OrderRow from '$lib/components/OrderRow.svelte';
   import { orders } from '$lib/data/pawline';
   import { formatCurrency } from '$lib/utils/format';
@@ -14,7 +15,7 @@
     <h1>Hóa đơn</h1>
     <p class="page-subtitle">Xem khoản nào đã hoàn tất và khoản nào cần một lời nhắc thân thiện.</p>
   </div>
-  <a class="btn-secondary" href="/orders">Quay lại đơn hàng</a>
+  <a class="btn-secondary" href={base + '/orders'}>Quay lại đơn hàng</a>
 </div>
 <div class="metric-grid">
   <div class="card metric-card">

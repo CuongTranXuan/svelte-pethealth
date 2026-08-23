@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
   import { customers } from '$lib/data/pawline';
   import { formatCurrency, formatDate, translateCustomerStatus } from '$lib/utils/format';
@@ -20,7 +21,7 @@
     <h1>Khách hàng & thú cưng</h1>
     <p class="page-subtitle">Xem nhanh những gia đình tin tưởng đội ngũ của bạn.</p>
   </div>
-  <a class="btn-primary" href="/customers/new"
+  <a class="btn-primary" href={base + '/customers/new'}
     ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>Thêm khách hàng</a
   >
 </div>
@@ -77,9 +78,8 @@
       ><tbody
         >{#each filteredCustomers as customer}<tr
             ><td
-              ><a class="row-name" href="/customers/{customer.id}">{customer.name}</a><span
-                class="row-subtext">{customer.city}</span
-              ></td
+              ><a class="row-name" href={`${base}/customers/${customer.id}`}>{customer.name}</a
+              ><span class="row-subtext">{customer.city}</span></td
             ><td>{customer.phone}<span class="row-subtext">{customer.email}</span></td><td
               class="row-name">{customer.pets}</td
             ><td>{formatDate(customer.lastVisit)}</td><td class="row-name"

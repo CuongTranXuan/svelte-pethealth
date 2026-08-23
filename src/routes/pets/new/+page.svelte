@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { customers } from '$lib/data/pawline';
   let saved = $state(false);
   function submit() {
@@ -9,7 +10,7 @@
 <svelte:head><title>Thêm thú cưng · Pawline</title></svelte:head>
 <div class="page-header">
   <div>
-    <a class="muted-link" href="/pets">← Quay lại thú cưng</a>
+    <a class="muted-link" href={base + '/pets'}>← Quay lại thú cưng</a>
     <p class="eyebrow" style="margin-top:18px">Mỗi hồ sơ đều hữu ích</p>
     <h1>Thêm thú cưng</h1>
     <p class="page-subtitle">Cung cấp những thông tin cần thiết để đội ngũ chăm sóc tốt hơn.</p>
@@ -18,7 +19,7 @@
 {#if saved}<div class="success-banner">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg><span
       >Hồ sơ thú cưng đã được lưu cục bộ trong bản mẫu này.</span
-    ><a class="muted-link" href="/pets">Xem danh bạ →</a>
+    ><a class="muted-link" href={base + '/pets'}>Xem danh bạ →</a>
   </div>{/if}
 <section class="card detail-card" style="max-width:760px">
   <form
@@ -66,8 +67,9 @@
       </div>
     </div>
     <div class="form-actions">
-      <a class="btn-secondary" href="/pets">Hủy</a><button class="btn-primary" type="submit"
-        >Lưu hồ sơ thú cưng</button
+      <a class="btn-secondary" href={base + '/pets'}>Hủy</a><button
+        class="btn-primary"
+        type="submit">Lưu hồ sơ thú cưng</button
       >
     </div>
   </form>

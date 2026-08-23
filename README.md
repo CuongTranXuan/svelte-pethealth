@@ -11,7 +11,11 @@ npm install
 npm run dev
 ```
 
-The development server runs at `http://localhost:5173` by default. The temporary test server used for this implementation is exposed separately and is not a production deployment.
+The development server runs at `http://localhost:5173` by default.
+
+## Permanent deployment
+
+Pawline is published from the `dev` branch through GitHub Pages at [cuongtranxuan.github.io/svelte-pethealth](https://cuongtranxuan.github.io/svelte-pethealth/). The workflow in `.github/workflows/pages.yml` builds the static SvelteKit site with `BASE_PATH=/svelte-pethealth` and deploys the generated `build/` directory whenever `dev` changes. The project uses `@sveltejs/adapter-static`; dynamic detail pages and credential-dependent auth pages are served through the generated SPA fallback.
 
 ## Main routes
 

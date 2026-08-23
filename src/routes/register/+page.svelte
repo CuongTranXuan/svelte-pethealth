@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { supabase } from '$lib/supabase';
   import { goto } from '$app/navigation';
 
@@ -21,7 +22,7 @@
     if (signUpError) {
       error = signUpError.message;
     } else {
-      goto('/');
+      goto(`${base}/`);
     }
   }
 </script>
@@ -32,7 +33,7 @@
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Tạo tài khoản mới</h2>
       <p class="mt-2 text-center text-sm text-gray-600">
         Hoặc
-        <a href="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <a href={base + '/login'} class="font-medium text-indigo-600 hover:text-indigo-500">
           đăng nhập vào tài khoản hiện có
         </a>
       </p>

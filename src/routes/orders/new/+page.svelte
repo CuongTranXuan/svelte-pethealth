@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { customers, orders, products, pets } from '$lib/data/pawline';
   import { formatCurrency } from '$lib/utils/format';
 
@@ -26,7 +27,7 @@
 
 <div class="page-header">
   <div>
-    <a class="muted-link" href="/orders">← Quay lại đơn hàng</a>
+    <a class="muted-link" href={base + '/orders'}>← Quay lại đơn hàng</a>
     <p class="eyebrow" style="margin-top:18px">Tạo thật đơn giản</p>
     <h1>Tạo đơn hàng</h1>
     <p class="page-subtitle">Thêm sản phẩm hoặc dịch vụ chăm sóc vào hồ sơ khách hàng.</p>
@@ -36,7 +37,7 @@
 {#if submitted}<div class="success-banner">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg><span
       >Đơn nháp đã được lưu cục bộ. Bạn có thể xem lại trong không gian mẫu này.</span
-    ><a class="muted-link" href="/orders">Xem đơn hàng →</a>
+    ><a class="muted-link" href={base + '/orders'}>Xem đơn hàng →</a>
   </div>{/if}
 
 <section class="card detail-card" style="max-width:760px">
@@ -108,8 +109,9 @@
       <span class="row-subtext" style="margin:0">Dữ liệu mẫu · chưa xử lý thanh toán</span>
     </div>
     <div class="form-actions">
-      <a class="btn-secondary" href="/orders">Cancel</a><button class="btn-primary" type="submit"
-        >Lưu đơn nháp</button
+      <a class="btn-secondary" href={base + '/orders'}>Cancel</a><button
+        class="btn-primary"
+        type="submit">Lưu đơn nháp</button
       >
     </div>
   </form>

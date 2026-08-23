@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { page } from '$app/state';
   import OrderRow from '$lib/components/OrderRow.svelte';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
@@ -19,12 +20,12 @@
 {#if customer}
   <div class="page-header">
     <div>
-      <a class="muted-link" href="/customers">← Quay lại khách hàng</a>
+      <a class="muted-link" href={base + '/customers'}>← Quay lại khách hàng</a>
       <p class="eyebrow" style="margin-top:18px">Hồ sơ khách hàng</p>
       <h1>{customer.name}</h1>
       <p class="page-subtitle">Một chút thông tin giúp mỗi lần tương tác trở nên gần gũi hơn.</p>
     </div>
-    <a class="btn-secondary" href="/orders/new">Tạo đơn hàng</a>
+    <a class="btn-secondary" href={base + '/orders/new'}>Tạo đơn hàng</a>
   </div>
   <div class="detail-grid">
     <section class="card detail-card">
@@ -67,7 +68,7 @@
       </h2>
       <div class="alert-list" style="padding:0">
         {#each customerPets as pet}<a
-            href="/pets/{pet.id}"
+            href={`${base}/pets/${pet.id}`}
             class="alert-row"
             style="text-decoration:none"
             ><div class="product-avatar" style="background:{pet.color}33">
@@ -112,7 +113,8 @@
     </div>
   </section>
 {:else}<div class="empty-state">
-    <strong>Khách hàng này không còn tồn tại.</strong><a class="muted-link" href="/customers"
-      >Quay lại khách hàng →</a
+    <strong>Khách hàng này không còn tồn tại.</strong><a
+      class="muted-link"
+      href={base + '/customers'}>Quay lại khách hàng →</a
     >
   </div>{/if}

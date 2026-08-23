@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import MetricCard from '$lib/components/MetricCard.svelte';
   import OrderRow from '$lib/components/OrderRow.svelte';
   import RevenueChart from '$lib/components/RevenueChart.svelte';
@@ -23,7 +24,7 @@
     <h1>Chào buổi sáng, Cuong.</h1>
     <p class="page-subtitle">Đây là bức tranh nhỏ về một ngày bận rộn và khỏe mạnh tại Pawline.</p>
   </div>
-  <a class="btn-primary" href="/orders/new"
+  <a class="btn-primary" href={base + '/orders/new'}
     ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>Tạo đơn hàng
   </a>
 </div>
@@ -66,7 +67,7 @@
         <h2>Tổng quan doanh thu</h2>
         <p class="page-subtitle">Xu hướng tăng nhẹ trong bảy ngày qua.</p>
       </div>
-      <a class="muted-link" href="/statistics">Xem phân tích →</a>
+      <a class="muted-link" href={base + '/statistics'}>Xem phân tích →</a>
     </div>
     <div class="chart-wrap"><RevenueChart points={revenueByPeriod['7d']} /></div>
   </section>
@@ -77,7 +78,7 @@
         <h2>Tồn kho cần chú ý</h2>
         <p class="page-subtitle">Một lời nhắc nhỏ trước khi kệ hàng trống.</p>
       </div>
-      <a class="muted-link" href="/products">Xem tất cả →</a>
+      <a class="muted-link" href={base + '/products'}>Xem tất cả →</a>
     </div>
     <div class="alert-list">
       {#each lowStock.slice(0, 4) as product}
@@ -105,7 +106,7 @@
       <h2>Đơn hàng gần đây</h2>
       <p class="page-subtitle">Hoạt động mới nhất từ cửa hàng và phòng khám.</p>
     </div>
-    <a class="muted-link" href="/orders">Xem tất cả đơn hàng →</a>
+    <a class="muted-link" href={base + '/orders'}>Xem tất cả đơn hàng →</a>
   </div>
   <div class="table-scroll">
     <table class="data-table">

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { page } from '$app/state';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
   import { customers, orders, pets } from '$lib/data/pawline';
@@ -32,7 +33,7 @@
 {#if order}
   <div class="page-header">
     <div>
-      <a class="muted-link" href="/orders">← Quay lại đơn hàng</a>
+      <a class="muted-link" href={base + '/orders'}>← Quay lại đơn hàng</a>
       <p class="eyebrow" style="margin-top:18px">Chi tiết đơn hàng</p>
       <h1>{order.id}</h1>
       <p class="page-subtitle">
@@ -40,7 +41,7 @@
       </p>
     </div>
     <div style="display:flex;gap:9px;flex-wrap:wrap">
-      <a class="btn-secondary" href="/orders">Đóng</a>
+      <a class="btn-secondary" href={base + '/orders'}>Đóng</a>
       <button class="btn-primary" type="button" onclick={() => window.print()}>In hóa đơn</button>
     </div>
   </div>
@@ -123,7 +124,7 @@
   </div>
 {:else}
   <div class="empty-state">
-    <strong>Đơn hàng này không còn tồn tại.</strong><a class="muted-link" href="/orders"
+    <strong>Đơn hàng này không còn tồn tại.</strong><a class="muted-link" href={base + '/orders'}
       >Quay lại tất cả đơn hàng →</a
     >
   </div>

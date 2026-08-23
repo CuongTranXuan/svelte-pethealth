@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { pets } from '$lib/data/pawline';
 
   let search = $state('');
@@ -18,7 +19,7 @@
     <h1>Danh bạ thú cưng</h1>
     <p class="page-subtitle">Nắm đúng thông tin chăm sóc trước cuộc trò chuyện tiếp theo.</p>
   </div>
-  <a class="btn-secondary" href="/customers">Xem danh bạ khách hàng</a>
+  <a class="btn-secondary" href={base + '/customers'}>Xem danh bạ khách hàng</a>
 </div>
 <section class="card table-card" style="margin-top:0">
   <div class="card-header">
@@ -45,10 +46,13 @@
       ><tbody
         >{#each filteredPets as pet}<tr
             ><td
-              ><a class="row-name" href="/pets/{pet.id}">{pet.name}</a><span class="row-subtext"
-                >Hồ sơ {pet.id}</span
+              ><a class="row-name" href={`${base}/pets/${pet.id}`}>{pet.name}</a><span
+                class="row-subtext">Hồ sơ {pet.id}</span
               ></td
-            ><td><a class="row-name" href="/customers/{pet.customerId}">{pet.customerName}</a></td
+            ><td
+              ><a class="row-name" href={`${base}/customers/${pet.customerId}`}
+                >{pet.customerName}</a
+              ></td
             ><td
               >{pet.species === 'Dog' ? 'Chó' : pet.species === 'Cat' ? 'Mèo' : 'Thỏ'}<span
                 class="row-subtext">{pet.breed}</span

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import OrderRow from '$lib/components/OrderRow.svelte';
   import { orders } from '$lib/data/pawline';
 
@@ -27,7 +28,7 @@
       Theo dõi rõ ràng mọi giao dịch từ lúc tạo đến khi thanh toán và nhận hàng.
     </p>
   </div>
-  <a class="btn-primary" href="/orders/new"
+  <a class="btn-primary" href={base + '/orders/new'}
     ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>Tạo đơn hàng
   </a>
 </div>
@@ -56,7 +57,7 @@
       <h2>Tất cả đơn hàng</h2>
       <p class="page-subtitle">Tìm theo đơn hàng, khách hàng hoặc thú cưng.</p>
     </div>
-    <a class="muted-link" href="/bills">Mở danh sách hóa đơn →</a>
+    <a class="muted-link" href={base + '/bills'}>Mở danh sách hóa đơn →</a>
   </div>
   <div class="toolbar">
     <label class="search-field" aria-label="Search orders"

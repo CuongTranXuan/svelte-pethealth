@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { login } from '$lib/stores/auth';
   import { goto } from '$app/navigation';
 
@@ -14,7 +15,7 @@
     loading = false;
 
     if (result.success) {
-      goto('/');
+      goto(`${base}/`);
     } else {
       error = result.error || 'Login failed';
     }
@@ -29,7 +30,7 @@
       </h2>
       <p class="mt-2 text-center text-sm text-gray-600">
         Hoặc
-        <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <a href={base + '/register'} class="font-medium text-indigo-600 hover:text-indigo-500">
           đăng ký tài khoản mới
         </a>
       </p>
