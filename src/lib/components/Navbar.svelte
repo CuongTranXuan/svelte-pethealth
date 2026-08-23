@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { user, logout } from '$lib/stores/auth';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
   async function handleLogout() {
     await logout();
-    goto('/login');
+    goto(`${base}/login`);
   }
 </script>
 
@@ -21,7 +22,7 @@
         {#if $user}
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
             <a
-              href="/dashboard"
+              href={base + '/dashboard'}
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               class:border-indigo-500={$page.url.pathname === '/dashboard'}
               class:text-gray-900={$page.url.pathname === '/dashboard'}
@@ -29,7 +30,7 @@
               Bảng Điều Khiển
             </a>
             <a
-              href="/pets"
+              href={base + '/pets'}
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               class:border-indigo-500={$page.url.pathname.startsWith('/pets')}
               class:text-gray-900={$page.url.pathname.startsWith('/pets')}
@@ -37,7 +38,7 @@
               Thú Cưng
             </a>
             <a
-              href="/customers"
+              href={base + '/customers'}
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               class:border-indigo-500={$page.url.pathname.startsWith('/customers')}
               class:text-gray-900={$page.url.pathname.startsWith('/customers')}
@@ -45,7 +46,7 @@
               Khách Hàng
             </a>
             <a
-              href="/bills"
+              href={base + '/bills'}
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               class:border-indigo-500={$page.url.pathname.startsWith('/bills')}
               class:text-gray-900={$page.url.pathname.startsWith('/bills')}
@@ -53,7 +54,7 @@
               Hóa Đơn
             </a>
             <a
-              href="/statistics"
+              href={base + '/statistics'}
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               class:border-indigo-500={$page.url.pathname.startsWith('/statistics')}
               class:text-gray-900={$page.url.pathname.startsWith('/statistics')}
@@ -87,12 +88,12 @@
         {:else}
           <div class="flex items-center gap-4">
             <a
-              href="/login"
+              href={base + '/login'}
               class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >Đăng Nhập</a
             >
             <a
-              href="/register"
+              href={base + '/register'}
               class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium"
               >Đăng Ký</a
             >

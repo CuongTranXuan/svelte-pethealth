@@ -33,3 +33,7 @@ The live `/dashboard` route was refreshed after the localization build. Navigati
 The live Orders page shows the Vietnamese headings and localized status badges. A stale Vite overlay reported a table text-node placement error from an earlier hot-reload state; the current source inspected at the same table lines is structurally valid. The payment filter still has one untranslated `Overdue` option and is being corrected before the final refresh.
 
 The final refresh of `/dashboard` confirmed the Vietnamese default end-to-end: navigation, headings, CTA labels, currency/date formats, chart labels, product names, stock labels, table headings, and payment/fulfillment statuses are localized. The final `/orders` refresh confirmed the Vietnamese payment filter options and table copy render without the Vite overlay.
+
+## Permanent hosting decision
+
+The source repository has a committed GitHub Pages workflow and static build configuration. The GitHub Pages API could not be enabled with the available repository token (`403 Resource not accessible by integration`). The account user-site at `https://cuongtranxuan.github.io/` is active but currently serves an existing FDM Face Detection Demo, so it should not be overwritten without explicit approval. The current permanent deployment step therefore requires either enabling Pages for `svelte-pethealth` in repository Settings → Pages with **GitHub Actions** as the source, or choosing a separate hosting account/domain.
